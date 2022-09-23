@@ -5,20 +5,14 @@ const port = process.env.PORT
 
 //Express used the EJS how view engine
 app.set("view engine", "ejs")
+app.use(express.static('public'))
 
-app.get('/:nome/:lang', (req, res) => {
-  let nome = req.params.nome
-  let lang = req.params.lang
+app.get('/', (req, res) => {
+  res.render('index')
+})
 
-  let showMsg = false
-
-  res.render('index', {
-    nome: nome,
-    lang: lang,
-    empresa: "Pado Labs",
-    inscritos: 17,
-    msg: showMsg
-  })
+app.get('/perguntar', (req, res) => {
+  res.render('perguntar')
 })
 
 app.listen(port, () => {
