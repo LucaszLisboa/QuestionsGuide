@@ -2,15 +2,18 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const connection = require('./database/database')
+const questionModel = require('./database/models/Question')
 require('dotenv').config()
 
 //Database
-connection.authenticate()
-.then(() => {
-  console.log('Connection made to the database.!')
-}).catch((error) => {
-  console.log(error)
-})
+connection
+  .authenticate()
+  .then(() => {
+    console.log('Connection made to the database.!')
+  })
+  .catch(error => {
+    console.log(error)
+  })
 
 const port = process.env.PORT
 
