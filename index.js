@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const connection = require('./database/database')
-const questionModel = require('./database/models/Question')
+const Question = require('./database/models/Question')
 require('dotenv').config()
 
 //Database
@@ -27,7 +27,13 @@ app.use(bodyParser.json())
 
 //Routes
 app.get('/', (req, res) => {
-  res.render('index')
+  Question.findAll({ raw: true, order:[
+    ['id', 'DESC'] //DESC ordenando de forma decrescente pelo id
+  ] }).then(questions => {
+    res.render('index', {
+      questions: questions
+    })
+  })
 })
 
 app.get('/perguntar', (req, res) => {
@@ -37,13 +43,34 @@ app.get('/perguntar', (req, res) => {
 app.post('/salvarpergunta', (req, res) => {
   let title = req.body.title
   let description = req.body.description
-  res.send(
-    'Formulário recebido com sucesso! Título: ' +
-      title +
-      ' Descrição: ' +
-      description
-  )
+
+  Question.create({
+    title: title,
+    description: description
+  }).then(() => {
+    res.redirect('/')
+  })
 })
+
+
+app.get('/pergunta/:id', (req, res) => {  //procurando pergunta pelo id
+  let id = req.params.id
+  
+  Question.findOne({
+    where: { id: id }
+  })
+  .then(question => {
+    if (question != undefined) {
+      res.render('pergunta', {
+        question: question
+      })
+    } else {
+      res.redirect('/')
+    }
+  })
+})
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
